@@ -6,10 +6,20 @@ The sensor JSON REST API exposes CRUD, geospatial, and tagged querying functiona
 The core functionality below has been tested to 100% code coverage.
 
 ```
-● Storing name, location (gps position), and a list of tags for each sensor.
-● Retrieving metadata for an individual sensor by name.
-● Updating a sensor’s metadata.
-● Querying to find the sensor nearest to a given location.
+- Storing name, location (gps position), and a list of tags for each sensor.
+- Retrieving metadata for an individual sensor by name.
+- Updating a sensor’s metadata.
+- Querying to find the sensor nearest to a given location.
+```
+
+With additional functionality added without tests:
+
+```
+- Querying for a list of all sensors with a given tag. No tag returns all sensors.
+- Querying to find the nearest sensor to a given location by tag.
+- Querying for a list of all tags in use in the sensor set.
+- Querying for a list of all sensor locations in use in the sensor set.
+- Querying for a count of all sensors.
 ```
 
 ### Model
@@ -125,12 +135,12 @@ GET /sensors/near?lat={latitude}&lng={longitude}&radius={radius}
 
 ```
 
-Furthermore, with the right query language and indexing, we can implement more complex queries such as querying sensors by multiple tags within a bounding box or radius. We could also extend the model for a sensor, for example, to include a value and timestamp for when the sensor was last updated. This would open up the possibility to query for sensors by tags, time span, and aggregate values over space and time while querying within a bounding box or radius.
+With the right query language and indexing, we can implement more complex queries such as querying sensors by multiple tags within a bounding box or radius. We could also extend the model for a sensor, for example, to include a value and timestamp for when the sensor was last updated. This would open up the possibility to query for sensors by tags, time span, and aggregate values over space and time while querying within a bounding box or radius.
 
 ## Future Development
 
 With more time, I would like to implement the following:
 
-- Tighter delineation of read/write mutex locks using a RWMutex instead of a Mutex struct. This should be a very quick chagne.
+- Tighter delineation of read/write mutex locks using a RWMutex instead of a Mutex struct. This should be a very quick change.
 - Less redundant handler testing, and a more complete testing suite in general. The core functionality is tested to 100% code coverage, but queries delineated by tagging and location are additional functionalities and not tested.
 - More complete logging.
