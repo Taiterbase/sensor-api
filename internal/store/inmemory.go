@@ -11,6 +11,7 @@ import (
 	"github.com/tidwall/rtree"
 )
 
+// InMemorySensorStore is an in-memory implementation of SensorStore.
 type InMemorySensorStore struct {
 	mu      sync.Mutex
 	sensors map[string]model.Sensor
@@ -18,6 +19,7 @@ type InMemorySensorStore struct {
 	rt *rtree.RTreeGN[float64, string]
 }
 
+// NewInMemorySensorStore creates a new InMemorySensorStore.
 func NewInMemorySensorStore() *InMemorySensorStore {
 	return &InMemorySensorStore{
 		sensors: make(map[string]model.Sensor),
@@ -25,6 +27,7 @@ func NewInMemorySensorStore() *InMemorySensorStore {
 	}
 }
 
+// AddSensor adds a sensor to the store.
 func (store *InMemorySensorStore) AddSensor(sensor model.Sensor) (int, error) {
 	store.mu.Lock()
 	defer store.mu.Unlock()
@@ -55,6 +58,7 @@ func (store *InMemorySensorStore) GetSensor(name string) (model.Sensor, int, err
 	return sensor, http.StatusOK, nil
 }
 
+// UpdateSensor updates a sensor in the store.
 func (store *InMemorySensorStore) UpdateSensor(name string, updatedSensor *model.Sensor) (int, error) {
 	store.mu.Lock()
 	defer store.mu.Unlock()
@@ -87,6 +91,7 @@ func (store *InMemorySensorStore) UpdateSensor(name string, updatedSensor *model
 	return http.StatusNoContent, nil
 }
 
+// RemoveSensor removes a sensor from the store.
 func (store *InMemorySensorStore) RemoveSensor(name string) (int, error) {
 	store.mu.Lock()
 	defer store.mu.Unlock()
@@ -104,6 +109,7 @@ func (store *InMemorySensorStore) RemoveSensor(name string) (int, error) {
 	return http.StatusNoContent, nil
 }
 
+// GetNearestSensor returns the nearest sensor to the given location.
 func (store *InMemorySensorStore) GetNearestSensor(location model.Location) (*model.Sensor, int, error) {
 	store.mu.Lock()
 	defer store.mu.Unlock()

@@ -16,12 +16,14 @@ type SensorAPI struct {
 	store store.SensorStore
 }
 
+// NewSensorAPI creates a new SensorAPI.
 func NewSensorAPI(store store.SensorStore) *SensorAPI {
 	return &SensorAPI{
 		store: store,
 	}
 }
 
+// SensorsHandler handles requests to /sensors.
 func (api *SensorAPI) SensorsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
@@ -52,6 +54,7 @@ func (api *SensorAPI) SensorsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// SensorHandler handles requests to /sensors/{name}.
 func (api *SensorAPI) SensorHandler(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimPrefix(r.URL.Path, "/sensors/")
 	log.Debug("name: ", name)
@@ -99,6 +102,7 @@ func (api *SensorAPI) SensorHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// NearestSensorHandler handles requests to /nearest-sensor.
 func (api *SensorAPI) NearestSensorHandler(w http.ResponseWriter, r *http.Request) {
 	lat, err := strconv.ParseFloat(r.FormValue("latitude"), 64)
 	if err != nil {
