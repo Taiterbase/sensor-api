@@ -1,12 +1,11 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"sensor-api/internal/api"
 	"sensor-api/internal/store"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -24,9 +23,13 @@ func main() {
 		http.HandleFunc("/sensors/{name}", sensorAPI.deleteSensorByName)
 		http.HandleFunc("/sensors/within", sensorAPI.getSensorsWithinBoundingBox)
 		http.HandleFunc("/sensors/near", sensorAPI.getSensorsWithinRadius)
+		http.HandleFunc("/sensors/tags/within", sensorAPI.getSensorsByTagWithinBoundingBox)
+		http.HandleFunc("/sensors/tags/near", sensorAPI.getSensorsByTagWithinRadius)
 		http.HandleFunc("/sensors/count", sensorAPI.getTotalSensors)
 		http.HandleFunc("/sensors/tags", sensorAPI.getUniqueTags)
+		http.HandleFunc("/sensors/locations", sensorAPI.getUniqueLocations)
+		http.HandleFunc("/sensors/locations/count", sensorAPI.getTotalUniqueLocations)
 	*/
-	logrus.Info("Listening on port 8080")
+	log.Info("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
