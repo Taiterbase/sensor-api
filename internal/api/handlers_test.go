@@ -120,7 +120,7 @@ func TestSensorsHandlerOptions(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 
 	// Check the Allow header is what we expect
-	assert.Equal(t, "POST, OPTIONS", recorder.Header().Get("Allow"))
+	assert.Equal(t, "GET, POST, OPTIONS", recorder.Header().Get("Allow"))
 }
 
 func TestSensorsHandlerHead(t *testing.T) {
@@ -167,7 +167,7 @@ func TestRemoveSensorHandler(t *testing.T) {
 	handler := http.HandlerFunc(NewSensorAPI(store).SensorHandler)
 	handler.ServeHTTP(recorder, req)
 	// Check the status code is what we expect
-	assert.Equal(t, http.StatusOK, recorder.Code)
+	assert.Equal(t, http.StatusNoContent, recorder.Code)
 	handler.ServeHTTP(recorder, req)
 }
 
@@ -269,7 +269,7 @@ func TestUpdateSensorHandler(t *testing.T) {
 	handler := http.HandlerFunc(NewSensorAPI(store).SensorHandler)
 	handler.ServeHTTP(recorder, req)
 	// Check the status code is what we expect
-	assert.Equal(t, http.StatusOK, recorder.Code)
+	assert.Equal(t, http.StatusNoContent, recorder.Code)
 
 	getReq, err := http.NewRequest("GET", "/sensors/Sensor1", nil)
 	assert.NoError(t, err)
@@ -526,4 +526,50 @@ func TestNearestSensorHandlerNotFound(t *testing.T) {
 
 	// Check the status code is what we expect
 	assert.Equal(t, http.StatusNotFound, recorder.Code)
+}
+
+func TestTagsHandler(t *testing.T) {
+	// Create a new in-memory store and add a sensor to it
+	store := store.NewInMemorySensorStore()
+	sensor1 := model.Sensor{
+		Name: "Sensor1",
+		Location: model.Location{
+			Latitude:  37.7749,
+			Longitude: -122.4194,
+		},
+		Tags: []string{"tag1", "tag2"},
+	}
+	code, err := store.AddSensor(sensor1)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, code)
+
+	sensor2 := model.Sensor{
+		Name: "Sensor2",
+		Location: model.Location{
+			Latitude:  37.7749,
+			Longitude: -122.4194,
+		},
+		Tags: []string{"tag2", "tag3"},
+	}
+	code, err = store.AddSensor(sensor2)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, code)
+
+	// Create a new request to get the tags
+	req, err := http.NewRequest("GET", "/sensors/tags", nil)
+	assert.NoError(t, err)
+
+	// Create a new recorder to capture the response
+	recorder := httptest.NewRecorder()
+
+	// Call the Tags handler with the request and recorder
+	handler := http.HandlerFunc(NewSensorAPI(store).TagsHandler)
+	handler.ServeHTTP(recorder, req)
+
+	// Check the status code is what we expect
+	assert.Equal(t, http.StatusOK, recorder.Code)
+
+	// Check the response body is what we expect
+	expectedBody := fmt.Sprintln(`["tag1","tag2","tag3"]`)
+	assert.Equal(t, expectedBody, recorder.Body.String())
 }
