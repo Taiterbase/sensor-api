@@ -139,8 +139,9 @@ With the right query language and indexing, we can implement more complex querie
 
 ## Future Development
 
-With more time, I would like to implement the following:
+With more time, I would like to implement:
 
 - Tighter delineation of read/write mutex locks using a RWMutex instead of a Mutex struct. This should be a very quick change.
 - Less redundant handler testing, and a more complete testing suite in general. The core functionality is tested to 100% code coverage, but queries delineated by tagging and location are additional functionalities and not tested.
 - More complete logging.
+- Better input validation. For now the program uses an in-memory data store. If we were to use a database, we would need to validate input more thoroughly.
